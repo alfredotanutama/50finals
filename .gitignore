@@ -1,1 +1,40 @@
+# Ignore node_modules folder (common for Node.js projects)
+node_modules/
 
+# Ignore log files
+*.log
+
+# Ignore temporary files and backup files
+*.tmp
+*.swp
+*.bak
+.DS_Store
+
+# Ignore build output directories
+dist/
+build/
+
+# Ignore environment variables and secrets
+.env
+.env.local
+.env.*.local
+
+# Ignore compiled code
+*.class
+*.o
+*.out
+*.pyc
+*.pyo
+__pycache__/
+
+# Ignore IDE/project settings
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Ignore OS files
+Thumbs.db
+.DS_Store
