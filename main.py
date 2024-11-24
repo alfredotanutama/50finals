@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.sidebar.title("Menu")
+st.sidebar.title("Menus")
 st.sidebar.write("Ini adalah konten sidebar")
 
 # Konten utama
