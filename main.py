@@ -1,4 +1,4 @@
-import streamlit as st
+import streamlit as st # type: ignore
 
 st.sidebar.title("Menus")
 st.sidebar.write("Ini adalah konten sidebar")
