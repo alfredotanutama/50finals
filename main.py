@@ -1,4 +1,5 @@
 import streamlit as st # type: ignore
+import sqlite3
 
 st.sidebar.title("Menus")
 st.sidebar.write("Ini adalah konten sidebar")
