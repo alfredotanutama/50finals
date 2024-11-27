@@ -1,6 +1,7 @@
 import streamlit as st  # type: ignore
 from PIL import Image
 from helper import get_ingredients_from_db
+from debugdisplay import *
 
 # Set up the page configuration
 st.set_page_config(
@@ -18,20 +19,17 @@ st.image(image, caption='Best Nasi Goreng in Town', use_container_width=True)
 st.sidebar.markdown("---")
 st.sidebar.success("Please choose the main ingredients.")
 
-# List of items for checkboxes
-# items = ['Rice', 'Proteins', 'Vegetables', 'Others']
-items = get_ingredients_from_db()
+get_name = get_ingredients_from_db()
 
-# Initialize session state for checkboxes if not already done
-if 'checkbox_values' not in st.session_state:
-    st.session_state['checkbox_values'] = {item: False for item in items}
+#Get the Keys of Dictionary
+categories = list(get_name.keys())
 
-# Create checkboxes dynamically for each item in the list
-for item in items:
-    st.session_state['checkbox_values'][item] = st.checkbox(item, value=st.session_state['checkbox_values'].get(item, False))
+# list of each category
+rice = get_name['Rice']
+vegetable = get_name['Vegetable']
+protein = get_name['Protein']
+other = get_name['Other']
 
-# Display which items were selected
-st.write('You selected:', [item for item, is_checked in st.session_state['checkbox_values'].items() if is_checked])
-
+dbg_dis1(categories, rice, vegetable, protein, other)
 
 

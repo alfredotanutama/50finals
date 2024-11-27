@@ -7,10 +7,17 @@ def get_ingredients_from_db():
     conn = sqlite3.connect('ingredients.db')
     cursor = conn.cursor()
 
-    cursor.execute("SELECT ingredient FROM ingredients")
+    cursor.execute("SELECT ingredient, category FROM ingredients")
 
-    ingredients = [row[0] for row in cursor.fetchall()]
+    ingredients_dict = {}
+
+    for row in cursor.fetchall():
+        ingredient, category = row
+
+        if category not in ingredients_dict:
+            ingredients_dict[category] = []
+        
+        ingredients_dict[category].append(ingredient)
     
     conn.close()
-
-    return ingredients
+    return ingredients_dict
