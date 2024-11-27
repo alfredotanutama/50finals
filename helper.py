@@ -27,8 +27,10 @@ def make_checkbox_from_category(category, list):
     for item in category:
         if st.checkbox(item):
             if 'oil' in item.lower():
+                st.info(f"**You have selected:** {item}")
                 qty = st.number_input(f"How many milliliters of {item}?",min_value=1,step=1) 
             else:
+                st.info(f"**You have selected:** {item}")
                 qty = st.number_input(f"How many grams of {item}?",min_value=1,step=1) 
             
             # add to basket

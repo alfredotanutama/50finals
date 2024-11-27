@@ -24,6 +24,10 @@ shallot, garlic, ground shrimp paste, tamarind and chilli and accompanied by oth
 There is also another kind of nasi goreng which is made with ikan asin (salted dried fish) which is also popular across Indonesia.
 ''')
 
+with st.sidebar:
+    st.title("Byte🍴Bite")
+    st.markdown("*Help you Predict Bite to Bytes*")
+
 st.sidebar.markdown("---")
 # st.sidebar.success("Please choose the main ingredients.")
 
@@ -48,7 +52,7 @@ st.subheader('Rice 🍚')
 selected_rice = st.radio("Choose one of the rice",key="visibility",options=rice,)
 if selected_rice:
     st.info(f"**You have selected:** {selected_rice}")
-    qty = st.number_input(f"How many grams of {selected_rice}?",min_value=50,step=50) 
+    qty = st.number_input(f"How many grams of {selected_rice}?",min_value=0,step=50) 
     
     # add to basket
     basket_selected.append((selected_rice,qty))
@@ -75,8 +79,8 @@ print(basket_selected)
 
 
 st.markdown('---')
-if st.button("CHECK !"):
-    st.info("COST PREDICTED Rp. 1.290.000")
+# if st.button("CHECK !"):
+#     st.info("COST PREDICTED Rp. 1.290.000")
 
 # total cost by selections
 total_cost = 0
