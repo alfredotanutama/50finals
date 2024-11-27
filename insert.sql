@@ -29,11 +29,12 @@ INSERT INTO Ingredients (ingredient, indonesian_name, category, price) VALUES
 ('Iodized Fine Salt', 'Garam Halus Iodium', 'Other', 11753.75);
 
 
+
 SELECT 
     id, 
     ingredient, 
     indonesian_name AS "Bahan Pokok", 
-    price AS "Price (IDR)",
+    price AS "Price (IDR)/kg",
     category  
 FROM 
     Ingredients;
