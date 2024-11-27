@@ -29,8 +29,6 @@ st.sidebar.markdown("---")
 
 get_name = get_ingredients_from_db()
 
-
-
 # all selected in this list
 basket_selected = []
 
@@ -80,6 +78,9 @@ st.markdown('---')
 if st.button("CHECK !"):
     st.info("COST PREDICTED Rp. 1.290.000")
 
+# total cost by selections
+total_cost = 0
+
 # Display the basket with selected items and their grams
 with st.sidebar:
     st.sidebar.success("### Your Recipe 🧺🧾")
@@ -87,9 +88,30 @@ with st.sidebar:
         if isinstance(item, tuple):
             if 'oil' in item[0].lower():
                 st.write(f"- {item[0]} - {item[1]} milliliters")
+                raw_price = get_price_from_db(item[0])/1000
+                rawXqty = raw_price * item[1]
+                idr_price = format_rp(rawXqty)
+                st.info(f"-- Price: {idr_price}")
+                total_cost += rawXqty
             else:
                 # Display a tuple (ingredient, grams)
                 st.write(f"- {item[0]} - {item[1]} grams")
+                raw_price = get_price_from_db(item[0])/1000
+                rawXqty = raw_price * item[1]
+                idr_price = format_rp(rawXqty)
+                st.info(f"-- Price: {idr_price}")
+                total_cost += rawXqty
+                
         else:
             # Display string
             st.write(f"- {item}")
+
+#display for debugging
+suggested_price = 1.5 * total_cost
+dbg_dis3(basket_selected)
+print(f"Total Cost = {total_cost}")
+formatted_total_cost = format_rp(total_cost)
+formatted_suggested = format_rp(suggested_price)
+
+st.sidebar.markdown(f"# **Total Cost = {formatted_total_cost}**")
+st.sidebar.markdown(f"# **Suggested Price = {formatted_suggested}**")

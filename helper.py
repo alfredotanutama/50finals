@@ -34,3 +34,30 @@ def make_checkbox_from_category(category, list):
             # add to basket
             if qty > 0:
                 list.append((item, qty))
+
+# get price from db
+def get_price_from_db(ingredient_name):
+    conn = sqlite3.connect('ingredients.db')
+    cursor = conn.cursor()
+
+    # Query price from db
+    cursor.execute("SELECT price FROM Ingredients WHERE ingredient = ?", (ingredient_name,))
+    price = cursor.fetchone()
+    conn.close()
+
+    if price:
+        return price[0]
+    else:
+        print ("Price #NA")
+        return None # return 0 if not found
+    
+# format to Rupiah    
+def format_rp(number):
+    # Format the number with thousands separator and two decimal places
+    formatted_number = f"{number:,.2f}".replace(",", ".").replace(".", ",", 1)
+    
+    # Add 'Rp' in front
+    formatted_number_with_currency = f"Rp {formatted_number}"
+    
+    return formatted_number_with_currency
+
