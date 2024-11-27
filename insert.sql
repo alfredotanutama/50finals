@@ -6,10 +6,10 @@ CREATE TABLE Ingredients (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     ingredient TEXT NOT NULL,
     indonesian_name TEXT NOT NULL,
-    price REAL NOT NULL  -- Just define the column as price
+    price REAL NOT NULL 
 );
 
--- Insert data into the Ingredients table
+-- Insert data
 INSERT INTO Ingredients (ingredient, indonesian_name, price) VALUES
 ('Premium Rice', 'Beras Premium', 15042.50),
 ('Medium Rice', 'Beras Medium', 13053.75),
@@ -30,7 +30,7 @@ INSERT INTO Ingredients (ingredient, indonesian_name, price) VALUES
 SELECT 
     id, 
     ingredient, 
-    indonesian_name, 
-    price AS "Price (IDR)"  -- Use an alias for display purposes
+    indonesian_name AS "Bahan Pokok", 
+    price AS "Price (IDR)"  
 FROM 
     Ingredients;
