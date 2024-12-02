@@ -1,13 +1,15 @@
 import streamlit as st  # type: ignore
 from PIL import Image
-from helper import get_ingredients_from_db,make_checkbox_from_category
+from helper import *
 from debugdisplay import *
+
 
 # Set up the page configuration
 st.set_page_config(
     page_title="Byte2Bite",
     page_icon="🍴"
 )
+
 
 # Title and subtitle
 st.title("Byte🍴Bite")
@@ -27,7 +29,7 @@ There is also another kind of nasi goreng which is made with ikan asin (salted d
 with st.sidebar:
     st.title("Byte🍴Bite")
     st.markdown("*Help you Predict Bite to Bytes*")
-
+   
 st.sidebar.markdown("---")
 # st.sidebar.success("Please choose the main ingredients.")
 
@@ -77,10 +79,13 @@ st.subheader('Other 🧑‍🍳')
 make_checkbox_from_category(other, basket_selected)
 print(basket_selected)
 
+if basket_selected not in st.session_state:
+    st.session_state["basket_selected"] = ""
+if st.button("KEEP"):
+    st.session_state["basket_selected"] = basket_selected
+    st.write("Data Have Been Saved!")
 
 st.markdown('---')
-# if st.button("CHECK !"):
-#     st.info("COST PREDICTED Rp. 1.290.000")
 
 # total cost by selections
 total_cost = 0
@@ -88,26 +93,30 @@ total_cost = 0
 # Display the basket with selected items and their grams
 with st.sidebar:
     st.sidebar.success("### Your Recipe 🧺🧾")
-    for item in basket_selected:
+    for index, item in enumerate(basket_selected):
         if isinstance(item, tuple):
             if 'oil' in item[0].lower():
-                st.write(f"- {item[0]} - {item[1]} milliliters")
-                raw_price = get_price_from_db(item[0])/1000
-                rawXqty = raw_price * item[1]
-                idr_price = format_rp(rawXqty)
-                st.info(f"-- Price: {idr_price}")
-                total_cost += rawXqty
+                measure_unit = 'mililiters'                
             else:
-                # Display a tuple (ingredient, grams)
-                st.write(f"- {item[0]} - {item[1]} grams")
-                raw_price = get_price_from_db(item[0])/1000
-                rawXqty = raw_price * item[1]
-                idr_price = format_rp(rawXqty)
-                st.info(f"-- Price: {idr_price}")
-                total_cost += rawXqty
-                
+                measure_unit = 'grams'
+
+            # Display a tuple (ingredient, units)
+            st.write(f"- {item[0]} - {item[1]} {measure_unit}")
+            raw_price = get_price_from_db(item[0])/1000
+            rawXqty = raw_price * item[1]
+            idr_price = format_rp(rawXqty)
+
+            # Update the tuple to include measure_unit, raw_price, and rawXqty
+            updated_item = item + (measure_unit, raw_price, rawXqty)  # Add new data to the tuple
+
+            # Replace the old tuple with the updated tuple in the list
+            basket_selected[index] = updated_item
+
+            st.info(f"-- Price: {idr_price}")
+            total_cost += rawXqty
+            # basket_selected.append(measure_unit, rawXqty, raw_price)
         else:
-            # Display string
+            # Display non-tuple items (if any)
             st.write(f"- {item}")
 
 #display for debugging

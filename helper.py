@@ -63,3 +63,7 @@ def format_rp(number):
     
     return formatted_number_with_currency
 
+def draw_something_on_top_of_page_navigation():
+    st.sidebar.markdown(
+        "My Logo (sidebar) should be on top of the Navigation within the sidebar"
+    )

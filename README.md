@@ -6,4 +6,4 @@ First Run DB need:
   >  .read startup.sql
 
 First Run Main:
-  > streamlit run home.py
+  > streamlit run pages\home.py
