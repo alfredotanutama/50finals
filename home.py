@@ -79,16 +79,16 @@ st.subheader('Other 🧑‍🍳')
 make_checkbox_from_category(other, basket_selected)
 print(basket_selected)
 
-if basket_selected not in st.session_state:
-    st.session_state["basket_selected"] = ""
-if st.button("KEEP"):
-    st.session_state["basket_selected"] = basket_selected
-    st.write("Data Have Been Saved!")
-
 st.markdown('---')
 
 # total cost by selections
 total_cost = 0
+with st.sidebar:
+    if basket_selected not in st.session_state:
+        st.session_state["basket_selected"] = ""
+    if st.button("KEEP"):
+        st.session_state["basket_selected"] = basket_selected
+        st.write("Data Have Been Saved!")
 
 # Display the basket with selected items and their grams
 with st.sidebar:
@@ -119,6 +119,7 @@ with st.sidebar:
             # Display non-tuple items (if any)
             st.write(f"- {item}")
 
+
 #display for debugging
 suggested_price = 1.5 * total_cost
 dbg_dis3(basket_selected)
@@ -128,3 +129,4 @@ formatted_suggested = format_rp(suggested_price)
 
 st.sidebar.markdown(f"# **Total Cost = {formatted_total_cost}**")
 st.sidebar.markdown(f"# **Suggested Price = {formatted_suggested}**")
+

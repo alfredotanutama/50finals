@@ -19,20 +19,21 @@ if "basket_selected" in st.session_state:
     # ('Pure Beef', 3, 'grams', 136.185, 408.555)]
     if isinstance(ingredients_list, list) and all(isinstance(item, tuple) and len(item) == 5 for item in ingredients_list):
         ingredients_df = pd.DataFrame(ingredients_list, columns=['Item','Quantity','Unit','Price/Unit','Total Price'])
+        ingredients_df.index = ingredients_df.index + 1
         ingredients_df = ingredients_df[ingredients_df['Quantity'] > 0]
 
         # if not empty then show dataframe
         if not ingredients_df.empty:
-            st.dataframe(ingredients_df)
-
             # Create a pie chart based on the 'Total Price' for each ingredient
             st.write("Price Composition Per Each Item")
+            st.dataframe(ingredients_df)
+
             fig = px.pie(ingredients_df, values='Total Price', names='Item')
             st.plotly_chart(fig, use_container_width=True)
         else:
             st.write("No ingredients to display because all quantities are zero.")
     else:
-        st.write("Please return to Home to view this Page Again.")
+        st.write("Please fill the Home page to view this Page.")
 else:
     ingredients_list = []
     st.write("Press KEEP Button on Homepage to show this Data")
