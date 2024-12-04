@@ -41,9 +41,10 @@ if menu == 'View':
     st.dataframe(df.iloc[:, 1:], use_container_width=True, hide_index=True)
 
 elif menu == 'Add':
+    st.write("Add New Ingredient in the left side bar")
     # Add a new row feature (this part is inside the sidebar)
     with st.sidebar:
-        st.subheader("Add New Ingredient")
+        st.write("Add New Ingredient")
 
         # Create a form for adding new rows
         with st.form(key="add_form"):
@@ -91,6 +92,7 @@ elif menu == 'Add':
         st.session_state.Add_flag = False
 
 elif menu == 'Edit':
+    st.write("Edit the Ingredients")
     df = load_data()
     
     # Pagination logic
@@ -135,6 +137,7 @@ elif menu == 'Edit':
             st.session_state.success_message = None
 
 elif menu == 'Delete':
+    # st.write("Delete Unused Ingredient")
     # Load all ingredients from the database
     df = load_data()
 
@@ -167,6 +170,7 @@ elif menu == 'Delete':
             time.sleep(1)
             st.session_state.success_message = None
 elif menu == 'Reset':
+    st.write("Reset to default data")
     # Confirm reset
     if st.button("Reset Database"):
         reset_db(cursor, conn)
