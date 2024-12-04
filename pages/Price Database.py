@@ -1,18 +1,24 @@
 import sqlite3
 import pandas as pd
 import streamlit as st
+import time
+from helper import  reset_db
+
 # Predefined category options
 category_options = ["Rice", "Vegetable", "Protein", "Other"]
-st.sidebar.write("Ini adalah konten Data ")
+st.sidebar.write("Navigation")
+
+# menus for radio button
+menus = ['View', 'Add', 'Edit', 'Delete','Reset']
+
+with st.sidebar:
+    menu = st.radio('Menu', menus)
 
 # Create connection to db
 conn = sqlite3.connect('ingredients.db')
-
-# Create cursor object
 cursor = conn.cursor()
 
 st.title("Price Database")
-
 
 # Function to load data from the SQL table into a pandas DataFrame
 def load_data():
@@ -20,107 +26,152 @@ def load_data():
     df = pd.read_sql(query, conn)
     return df
 
-df = load_data()
+# Initialize Add_flag in session_state
+if 'Add_flag' not in st.session_state:
+    st.session_state.Add_flag = False
 
-# # Display the DataFrame
-# st.write("Current Data from SQL Table:")
-# st.dataframe(df)
+if 'success_message' not in st.session_state:
+    st.session_state.success_message = None
 
-with st.sidebar:
-    # Add a new row feature
-    st.subheader("Add New Ingredient")
+# Page view
+if menu == 'View':
+    df = load_data()
+    # Display the DataFrame
+    st.write("Current Data from SQL Table:")
+    st.dataframe(df.iloc[:, 1:], use_container_width=True, hide_index=True)
 
-    # Create a form for adding new rows
-    with st.form(key="add_form"):
-        ingredient = st.text_input("Ingredient Name")
-        indonesian_name = st.text_input("Indonesian Name")
-        category =  st.selectbox("Category", category_options)
-        price = st.number_input("Price", min_value=0.0, step=0.01)
-        
-        submit_button = st.form_submit_button("Add Ingredient")
+elif menu == 'Add':
+    # Add a new row feature (this part is inside the sidebar)
+    with st.sidebar:
+        st.subheader("Add New Ingredient")
 
-        if submit_button:
-            # Validation to check if the ingredient name is empty
-            if not ingredient or not indonesian_name:
-                st.error("Ingredient Name cannot be empty. Please provide a valid name.")
-            else:
-                # Check if the ingredient and indonesian_name already exist in the database
-                cursor.execute("SELECT COUNT(*) FROM Ingredients WHERE ingredient = ? AND indonesian_name = ?", (ingredient, indonesian_name))
-                existing_ingredient = cursor.fetchone()[0]
-    
-                if existing_ingredient > 0:
-                # If both ingredient and indonesian_name exist, show an error message
-                    st.error(f"Ingredient '{ingredient}' with Indonesian name '{indonesian_name}' already exists. Please use different names.")
+        # Create a form for adding new rows
+        with st.form(key="add_form"):
+            ingredient = st.text_input("Ingredient Name")
+            indonesian_name = st.text_input("Indonesian Name")
+            category = st.selectbox("Category", category_options)
+            price = st.number_input("Price", min_value=0.0, step=0.01)
+            
+            submit_button = st.form_submit_button("Add Ingredient")
+
+            if submit_button:
+                # Validation to check if the ingredient name is empty
+                if not ingredient or not indonesian_name:
+                    st.error("Ingredient Name cannot be empty. Please provide a valid name.")
                 else:
-                    # Insert the new row into the database
-                    query = """
-                    INSERT INTO Ingredients (ingredient, indonesian_name, category, price)
-                    VALUES (?, ?, ?, ?)
-                    """
-                    cursor.execute(query, (ingredient, indonesian_name, category, price))
-                    conn.commit()
-                    st.success(f"New ingredient '{ingredient}' added successfully!")
+                    # Check if the ingredient and indonesian_name already exist in the database
+                    cursor.execute("SELECT COUNT(*) FROM Ingredients WHERE ingredient = ? AND indonesian_name = ?", (ingredient, indonesian_name))
+                    existing_ingredient = cursor.fetchone()[0]
+        
+                    if existing_ingredient > 0:
+                        st.error(f"Ingredient '{ingredient}' with Indonesian name '{indonesian_name}' already exists. Please use different names.")
+                    else:
+                        # Insert the new row into the database
+                        query = """
+                        INSERT INTO Ingredients (ingredient, indonesian_name, category, price)
+                        VALUES (?, ?, ?, ?)
+                        """
+                        cursor.execute(query, (ingredient, indonesian_name, category, price))
+                        conn.commit()  # Commit the changes to the database
+                        st.success(f"New ingredient '{ingredient}' added successfully!")
+                        
+                        # Set the Add_flag to True to display the updated data outside the sidebar
+                        st.session_state.Add_flag = True
 
-                    # After submission, clear the input fields
-                    st.session_state['ingredient_input'] = ''
-                    st.session_state['indonesian_name_input'] = ''
-                    st.session_state['category_input'] = ''
-                    st.session_state['price_input'] = ''   
+    # After adding, show updated data outside the sidebar if Add_flag is True
+    if st.session_state.Add_flag:
+        # Reload the data after adding the new ingredient
+        df = load_data()  # Reload the data from the database
+        
+        # Show updated data in the main content (outside the sidebar)
+        st.info("Updated Data from SQL Table:")
+        st.dataframe(df.iloc[:, 1:], use_container_width=True, hide_index=True)
 
-                    # Reload data to reflect the new row
-                    df = load_data()
-                    # st.dataframe(df,use_container_width=True)
+        # Reset Add_flag to False to prevent repeated display of data
+        st.session_state.Add_flag = False
 
-# Pagination logic
-rows_per_page = 10  # Number of rows per page
-total_rows = len(df)
-num_pages = (total_rows // rows_per_page) + (1 if total_rows % rows_per_page != 0 else 0)
-
-# Page navigation
-page = st.selectbox("Select page", range(1, num_pages + 1))
-
-# Get the rows for the selected page
-start_row = (page - 1) * rows_per_page
-end_row = start_row + rows_per_page
-df_page = df.iloc[start_row:end_row]
-
-# Hide the 'id' column before displaying the dataframe
-# df_page_without_id = df_page.drop(columns=['id'])
-# df_page_without_id.index = df_page_without_id.index + 1
-
-
-# Allow editing of the table with a unique key for each instance
-edited_df = st.data_editor(df_page, key=f"data_editor_page_{page}")
-
-
-# Button to save the changes
-if st.button("Save Changes/ Refresh"):
-    for index, row in edited_df.iterrows():
-        # Assuming the primary key column is 'id' and is used for updates
-        query = f"""
-        UPDATE Ingredients
-        SET ingredient = ?, indonesian_name = ?, category = ?, price = ?
-        WHERE id = ?
-        """
-        cursor.execute(query, (row['ingredient'], row['indonesian_name'], row['category'], row['price'],row['id']))
+elif menu == 'Edit':
+    df = load_data()
     
-    conn.commit()
-    st.success("Changes saved/ refreshed successfully!")
+    # Pagination logic
+    rows_per_page = 10  # Number of rows per page
+    total_rows = len(df)
+    num_pages = (total_rows // rows_per_page) + (1 if total_rows % rows_per_page != 0 else 0)
 
-# Add delete dropdown functionality below the table
-delete_ingredient = st.selectbox("Select an ingredient to delete", df_page['ingredient'].tolist(), key="delete_ingredient_select")
+    # Page navigation
+    page = st.selectbox("Select page", range(1, num_pages + 1))
 
-if delete_ingredient:
-    if st.button(f"Delete '{delete_ingredient}'"):
-        # SQL query to delete the ingredient based on its name
-        cursor.execute("DELETE FROM Ingredients WHERE ingredient = ?", (delete_ingredient,))
+    # Get the rows for the selected page
+    start_row = (page - 1) * rows_per_page
+    end_row = start_row + rows_per_page
+    df_page = df.iloc[start_row:end_row]
+    
+    # Allow editing of the table with a unique key for each instance
+    edited_df = st.data_editor(df_page, key=f"data_editor_page_{page}", use_container_width=True, disabled=['id'], hide_index=True)
+
+    # Button to save the changes
+    if st.button("Save Changes"):
+        for index, row in edited_df.iterrows():
+            query = f"""
+            UPDATE Ingredients
+            SET ingredient = ?, indonesian_name = ?, category = ?, price = ?
+            WHERE id = ?
+            """
+            cursor.execute(query, (row['ingredient'], row['indonesian_name'], row['category'], row['price'], row['id']))
+        
         conn.commit()
+        # st.success("Changes saved successfully!")
+        # Store the success message in session_state
+        st.session_state.success_message = f"Changes saved successfully!"  # Store message
+        # Reload data after saving changes
+        df = load_data()
+        st.rerun()
+        # Display success message (if available)
 
-        # Success message after deletion
-        st.success(f"Ingredient '{delete_ingredient}' deleted successfully!")
+    if st.session_state.success_message:
+        with st.empty():
+            st.success(st.session_state.success_message)
+            time.sleep(1)
+            st.session_state.success_message = None
 
-        # Reload data to reflect the deletion
-        df = load_data()  # Reload the full data to get the latest data
+elif menu == 'Delete':
+    # Load all ingredients from the database
+    df = load_data()
 
-# Close the connection
+    # Select an ingredient to delete from the entire list (no pagination here)
+    delete_ingredient = st.selectbox("Select an ingredient to delete", df['ingredient'].tolist())
+
+    if delete_ingredient:
+        if st.button(f"Delete '{delete_ingredient}'"):
+            # SQL query to delete the ingredient based on its name
+            cursor.execute("DELETE FROM Ingredients WHERE ingredient = ?", (delete_ingredient,))
+            conn.commit()
+
+            # Success message after deletion
+            # st.success(f"Ingredient '{delete_ingredient}' deleted successfully!")
+
+            # Reload data to reflect the deletion
+            df = load_data()
+
+            # Store the success message in session_state
+            st.session_state.success_message = f"Ingredient '{delete_ingredient}' deleted successfully!"  # Store message
+
+            # Hide the old selectbox and show the new one
+            st.rerun()
+
+
+    # Display success message (if available)
+    if st.session_state.success_message:
+        with st.empty():
+            st.success(st.session_state.success_message)
+            time.sleep(1)
+            st.session_state.success_message = None
+elif menu == 'Reset':
+    # Confirm reset
+    if st.button("Reset Database"):
+        reset_db(cursor, conn)
+        st.success("Database has been reset and reinitialized with default data!")
+
+
+# Close connection after all operations
 conn.close()

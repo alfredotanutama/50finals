@@ -1,5 +1,6 @@
 import sqlite3
 import streamlit as st
+import pandas as pd
 
 # helper functions for home
 
@@ -67,3 +68,14 @@ def draw_something_on_top_of_page_navigation():
     st.sidebar.markdown(
         "My Logo (sidebar) should be on top of the Navigation within the sidebar"
     )
+
+
+# Function to initialize or reset the database
+def reset_db(cursor,conn):
+    # Read the SQL script from the 'insert.sql' file
+    with open('insert.sql', 'r') as file:
+        sql_script = file.read()
+    
+    # Execute the SQL script to drop and recreate the table
+    cursor.executescript(sql_script)
+    conn.commit()
