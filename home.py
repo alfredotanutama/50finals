@@ -13,7 +13,7 @@ st.set_page_config(
 
 # Title and subtitle
 st.title("Byte🍴Bite")
-st.markdown("*Help you Predict Bite to Bytes*")
+st.markdown("*Help you See Bite to Bytes*")
 
 # Load and display the main image
 image = Image.open('NasiGoreng.jpg')
@@ -28,10 +28,11 @@ There is also another kind of nasi goreng which is made with ikan asin (salted d
 
 with st.sidebar:
     st.title("Byte🍴Bite")
-    st.markdown("*Help you Predict Bite to Bytes*")
+    st.markdown("*Help you See Bite to Bytes*")
    
 st.sidebar.markdown("---")
 # st.sidebar.success("Please choose the main ingredients.")
+view = []
 
 get_name = get_ingredients_from_db()
 
@@ -86,7 +87,7 @@ total_cost = 0
 with st.sidebar:
     if basket_selected not in st.session_state:
         st.session_state["basket_selected"] = ""
-    if st.button("KEEP"):
+    if st.button("KEEP", type="primary", use_container_width=True):
         st.session_state["basket_selected"] = basket_selected
         st.write("Data Have Been Saved!")
 
