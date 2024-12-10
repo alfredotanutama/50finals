@@ -24,3 +24,7 @@ File "C:\Users\Alfredo\AppData\Local\Programs\Python\Python312\Lib\site-packages
 File "C:\Users\Alfredo\Desktop\final50\pages\Price Database.py", line 105, in <module>
     start_row = (page - 1) * rows_per_page
                  ~~~~~^~~
+
+
+
+add save recipe/ use last recipe
