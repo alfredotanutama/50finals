@@ -4,8 +4,11 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 
 st.title("Data & Dashboard")
-st.sidebar.write("Ini adalah konten Data")
-
+# st.sidebar.write("Ini adalah konten Data")
+with st.sidebar:
+    st.title("Byte🍴Bite")
+    st.markdown("*Help you See Bite to Bytes*")
+    
 # Check if basket_selected exists in session_state
 if "basket_selected" in st.session_state:
     ingredients_list = st.session_state["basket_selected"]

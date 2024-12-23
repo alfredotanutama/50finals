@@ -6,7 +6,7 @@ First Run DB need:
   >  .read startup.sql
 
 First Run Main:
-  > streamlit run pages\home.py
+  > streamlit run home.py
 
 
 Need improve:
