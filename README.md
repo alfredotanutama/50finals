@@ -5,7 +5,7 @@
 # 50finals
 cs50x final project
 
-#TODO
+#TODO BELOW
 
 First Run DB need:
   >  sqlite3 ingredients.db
