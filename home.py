@@ -91,13 +91,18 @@ with st.sidebar:
         st.session_state["basket_selected"] = basket_selected
         st.write("Data Have Been Saved!")
 
+liquid_ingredients = ['oil', 'soy sauce', 'vinegar', 'milk']  # Exact names
+nonliquid = ['chicken','beef']
+
 # Display the basket with selected items and their grams
 with st.sidebar:
     st.sidebar.success("### Your Recipe 🧺🧾")
     for index, item in enumerate(basket_selected):
         if isinstance(item, tuple):
-            if 'oil' in item[0].lower():
-                measure_unit = 'mililiters'                
+            # Check if the item is in the liquid ingredients list
+            
+            if item[0].lower() in liquid_ingredients:
+                measure_unit = 'milliliters'
             else:
                 measure_unit = 'grams'
 

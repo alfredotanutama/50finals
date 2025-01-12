@@ -1,6 +1,3 @@
-.mode box
-.headers ON
-
 -- Drop the table if it exists
 DROP TABLE IF EXISTS Ingredients;
 
